@@ -7,11 +7,19 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.CardView;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 import static com.zackeryrobinson.macdashboardbottomnavigationfragmentssplashcolors.R.drawable.ic_chevron_right_black_24dp;
 import static com.zackeryrobinson.macdashboardbottomnavigationfragmentssplashcolors.R.drawable.ic_expand_more_black_24dp;
@@ -43,7 +51,12 @@ public class AccountFragment extends Fragment implements  PayFragment.OnFragment
     CardView cvContacts;
 
 
-    private boolean tabOpen;
+    ConstraintLayout clTeam;
+    ImageView ivTeamChevron;
+    CardView cvTeam;
+    LinearLayout llTeamList;
+
+    private int tabOpen;
 
     public AccountFragment() {
         // Required empty public constructor
@@ -73,12 +86,48 @@ public class AccountFragment extends Fragment implements  PayFragment.OnFragment
         ivLodgingChevron = (ImageView) rootView.findViewById(R.id.ivLodgingChevron);
         cvLodging = (CardView) rootView.findViewById(R.id.cvLodging);
 
+        clTeam = (ConstraintLayout) rootView.findViewById(R.id.clTeam);
+        ivTeamChevron = (ImageView) rootView.findViewById(R.id.ivTeamChevron);
+        cvTeam = (CardView) rootView.findViewById(R.id.cvTeam);
+        llTeamList = (LinearLayout) rootView.findViewById(R.id.llTeamlist);
+
+
+        ArrayList<String> teamList = new ArrayList<>();
+        teamList.add("JohnnyRotten");
+        teamList.add("Wolverine");
+        teamList.add("Tindor DoubleDukes");
+        teamList.add("Oreos");
+        teamList.add("nightman");
+        teamList.add("dayman");
+        teamList.add("trolltoll");
+        teamList.add("Bird");
+        createTeam(teamList);
+
+
 
         clContacts.setOnClickListener(this);
         clAccounts.setOnClickListener(this);
         clLodging.setOnClickListener(this);
-        tabOpen=false;
+        clTeam.setOnClickListener(this);
+        tabOpen=0;
         return rootView;
+    }
+
+    private void createTeam( ArrayList<String> teamList){
+        int size = teamList.size();
+        TextView temp;
+        Context context = getContext();
+
+        for (int i = 0; i < size; i++)
+        {
+
+            temp = new TextView(getContext());
+
+            temp.setText(teamList.get(i)); //arbitrary task
+            temp.setGravity(Gravity.CENTER);
+            // add the textview to the linearlayout
+            llTeamList.addView(temp);
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -122,55 +171,81 @@ public class AccountFragment extends Fragment implements  PayFragment.OnFragment
             case R.id.clLodging:
                 openLodging();
                 break;
-        }
-    }
-
-
-    private void openContacts(){
-        if(tabOpen == false) {
-            svContacts.setVisibility(View.VISIBLE);
-            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
-            cvAccounts.setVisibility(View.GONE);
-            cvLodging.setVisibility(View.GONE);
-            tabOpen = true;
-        }else{
-            svContacts.setVisibility(View.GONE);
-            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(),ic_chevron_right_black_24dp));
-            cvAccounts.setVisibility(View.VISIBLE);
-            cvLodging.setVisibility(View.VISIBLE);
-            tabOpen = false;
-        }
-    }
-
-    private void openLodging(){
-        if(tabOpen == false) {
-            svLodging.setVisibility(View.VISIBLE);
-            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
-            cvAccounts.setVisibility(View.GONE);
-            cvContacts.setVisibility(View.GONE);
-            tabOpen = true;
-        }else{
-            svLodging.setVisibility(View.GONE);
-            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(),ic_chevron_right_black_24dp));
-            cvAccounts.setVisibility(View.VISIBLE);
-            cvContacts.setVisibility(View.VISIBLE);
-            tabOpen = false;
+            case R.id.clTeam:
+                openTeam();
+                break;
         }
     }
 
     private void openAccount() {
-        if (tabOpen == false) {
+        if (tabOpen != 1) {
             svAccounts.setVisibility(View.VISIBLE);
             ivAccountsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
-            cvLodging.setVisibility(View.GONE);
-            cvContacts.setVisibility(View.GONE);
-            tabOpen = true;
+            svLodging.setVisibility(View.GONE);
+            svContacts.setVisibility(View.GONE);
+            llTeamList.setVisibility(View.GONE);
+            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivTeamChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            tabOpen = 1;
         } else {
             svAccounts.setVisibility(View.GONE);
             ivAccountsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
-            cvLodging.setVisibility(View.VISIBLE);
-            cvContacts.setVisibility(View.VISIBLE);
-            tabOpen = false;
+            tabOpen = 0;
+        }
+    }
+
+    private void openLodging(){
+        if(tabOpen != 2) {
+            svLodging.setVisibility(View.VISIBLE);
+            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
+            svAccounts.setVisibility(View.GONE);
+            svContacts.setVisibility(View.GONE);
+            llTeamList.setVisibility(View.GONE);
+            ivAccountsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivTeamChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            tabOpen = 2;
+        }else{
+            svLodging.setVisibility(View.GONE);
+            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(),ic_chevron_right_black_24dp));
+            tabOpen = 0;
+        }
+    }
+
+    private void openContacts(){
+        if(tabOpen != 3) {
+            svContacts.setVisibility(View.VISIBLE);
+            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
+            svAccounts.setVisibility(View.GONE);
+            svLodging.setVisibility(View.GONE);
+            llTeamList.setVisibility(View.GONE);
+            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivAccountsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivTeamChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            tabOpen = 3;
+        }else{
+            svContacts.setVisibility(View.GONE);
+            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(),ic_chevron_right_black_24dp));
+            tabOpen = 0;
+        }
+    }
+
+    private void openTeam(){
+        if(tabOpen != 4) {
+            llTeamList.setVisibility(View.VISIBLE);
+            ivTeamChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_expand_more_black_24dp));
+            svAccounts.setVisibility(View.GONE);
+            svLodging.setVisibility(View.GONE);
+            svContacts.setVisibility(View.GONE);
+            ivLodgingChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivAccountsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            ivContactsChevron.setImageDrawable(ContextCompat.getDrawable(getContext(), ic_chevron_right_black_24dp));
+            tabOpen = 4;
+        }else{
+            llTeamList.setVisibility(View.GONE);
+            ivTeamChevron.setImageDrawable(ContextCompat.getDrawable(getContext(),ic_chevron_right_black_24dp));
+            tabOpen = 0;
         }
     }
 
